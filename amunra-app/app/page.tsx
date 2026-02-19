@@ -1,65 +1,819 @@
-import Image from "next/image";
+"use client";
+
+import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+
+// ─── Animation Variants ────────────────────────────────────────────────────────
+
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, delay: i * 0.1, ease: EASE },
+  }),
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+
+const letterVariant = {
+  hidden: { opacity: 0, y: 80, rotateX: -40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    rotateX: 0,
+    transition: { duration: 0.9, ease: EASE },
+  },
+};
+
+// ─── Navbar ────────────────────────────────────────────────────────────────────
+
+function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <>
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: EASE }}
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-6 transition-all duration-500 ${
+          scrolled ? "bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/10" : ""
+        }`}
+      >
+        {/* Logo */}
+        <a href="#" className="text-white text-xl font-bold tracking-[0.3em] uppercase">
+          AMUNRA
+        </a>
+
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center gap-10">
+          {["Collection", "Lookbook", "About", "Contact"].map((item) => (
+            <motion.a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              whileHover={{ opacity: 0.5 }}
+              className="text-white/70 text-xs tracking-[0.2em] uppercase transition-all"
+            >
+              {item}
+            </motion.a>
+          ))}
+        </div>
+
+        {/* Right Actions */}
+        <div className="flex items-center gap-6">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            className="hidden md:block text-white/70 text-xs tracking-[0.2em] uppercase border border-white/20 px-5 py-2 hover:bg-white hover:text-black transition-all duration-300"
+          >
+            Cart (0)
+          </motion.button>
+          {/* Hamburger */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden flex flex-col gap-1.5 p-1"
+          >
+            <motion.span
+              animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+              className="block w-6 h-px bg-white"
+            />
+            <motion.span
+              animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
+              className="block w-6 h-px bg-white"
+            />
+            <motion.span
+              animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+              className="block w-6 h-px bg-white"
+            />
+          </button>
+        </div>
+      </motion.nav>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ duration: 0.5, ease: EASE }}
+            className="fixed inset-0 z-40 bg-[#0a0a0a] flex flex-col items-center justify-center gap-10"
+          >
+            {["Collection", "Lookbook", "About", "Contact"].map((item, i) => (
+              <motion.a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + i * 0.08 }}
+                onClick={() => setMenuOpen(false)}
+                className="text-white text-4xl font-light tracking-[0.3em] uppercase hover:opacity-40 transition-opacity"
+              >
+                {item}
+              </motion.a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+// ─── Hero ──────────────────────────────────────────────────────────────────────
+
+function Hero() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+
+  const letters = "AMUNRA".split("");
+
+  return (
+    <section ref={ref} className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0a0a0a]">
+      {/* Subtle grid bg */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage:
+            "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
+        }}
+      />
+
+      {/* Parallax content */}
+      <motion.div style={{ y, opacity }} className="relative z-10 flex flex-col items-center text-center px-6">
+        {/* Brand name letters */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="flex overflow-hidden"
+          style={{ perspective: "1000px" }}
+        >
+          {letters.map((letter, i) => (
+            <motion.span
+              key={i}
+              variants={letterVariant}
+              className="text-white font-bold uppercase leading-none select-none"
+              style={{
+                fontSize: "clamp(5rem, 18vw, 18rem)",
+                letterSpacing: "-0.02em",
+                fontFamily: "var(--font-geist-sans)",
+              }}
+            >
+              {letter}
+            </motion.span>
+          ))}
+        </motion.div>
+
+        {/* Subtitle */}
+        <motion.p
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          custom={7}
+          className="text-white/40 text-xs md:text-sm tracking-[0.5em] uppercase mt-6"
+        >
+          Define Your Darkness
+        </motion.p>
+
+        {/* CTA */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          custom={9}
+          className="mt-12 flex flex-col sm:flex-row gap-4 items-center"
+        >
+          <motion.a
+            href="#collection"
+            whileHover={{ backgroundColor: "#fff", color: "#0a0a0a" }}
+            whileTap={{ scale: 0.97 }}
+            className="px-10 py-4 border border-white text-white text-xs tracking-[0.3em] uppercase transition-all duration-300"
+          >
+            Explore Collection
+          </motion.a>
+          <motion.a
+            href="#about"
+            whileHover={{ opacity: 0.5 }}
+            className="text-white/40 text-xs tracking-[0.25em] uppercase transition-all"
+          >
+            Our Story →
+          </motion.a>
+        </motion.div>
+      </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2, duration: 1 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
+      >
+        <span className="text-white/30 text-[10px] tracking-[0.4em] uppercase">Scroll</span>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
+          className="w-px h-10 bg-gradient-to-b from-white/40 to-transparent"
+        />
+      </motion.div>
+    </section>
+  );
+}
+
+// ─── Marquee ───────────────────────────────────────────────────────────────────
+
+function Marquee() {
+  const text = "NEW COLLECTION · SS25 · LIMITED DROPS · AMUNRA · DEFINE YOUR DARKNESS · ";
+  const repeated = text.repeat(6);
+
+  return (
+    <div className="bg-white overflow-hidden py-4 border-y border-white/10">
+      <div className="flex whitespace-nowrap marquee-track">
+        <span className="text-black text-xs tracking-[0.3em] uppercase font-medium pr-0">
+          {repeated}
+        </span>
+        <span className="text-black text-xs tracking-[0.3em] uppercase font-medium pr-0">
+          {repeated}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Collection ────────────────────────────────────────────────────────────────
+
+const products = [
+  {
+    id: 1,
+    name: "Void Oversized Tee",
+    category: "Essentials",
+    price: "$89",
+    tag: "NEW",
+    shade: "#1a1a1a",
+    accent: "#2a2a2a",
+  },
+  {
+    id: 2,
+    name: "Eclipse Cargo Pant",
+    category: "Bottoms",
+    price: "$195",
+    tag: "BESTSELLER",
+    shade: "#111",
+    accent: "#222",
+  },
+  {
+    id: 3,
+    name: "Obsidian Coach Jacket",
+    category: "Outerwear",
+    price: "$340",
+    tag: "LIMITED",
+    shade: "#161616",
+    accent: "#262626",
+  },
+  {
+    id: 4,
+    name: "Shadow Ribbed Knit",
+    category: "Tops",
+    price: "$135",
+    tag: "NEW",
+    shade: "#131313",
+    accent: "#232323",
+  },
+];
+
+function ProductCard({ product, index }: { product: typeof products[0]; index: number }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <motion.div
+      ref={ref}
+      variants={fadeUp}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      custom={index * 1.5}
+      className="group cursor-pointer"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Image placeholder */}
+      <div
+        className="relative overflow-hidden aspect-[3/4] mb-4"
+        style={{ background: product.shade }}
+      >
+        {/* Accent lines to simulate clothing texture */}
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            background: `repeating-linear-gradient(
+              135deg,
+              transparent,
+              transparent 40px,
+              ${product.accent} 40px,
+              ${product.accent} 41px
+            )`,
+          }}
+        />
+        {/* Center logo watermark */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span
+            className="text-white/5 font-bold tracking-widest uppercase select-none"
+            style={{ fontSize: "clamp(2rem, 6vw, 5rem)" }}
+          >
+            AMUNRA
+          </span>
+        </div>
+        {/* Tag */}
+        <div className="absolute top-4 left-4">
+          <span className="text-black bg-white text-[9px] tracking-[0.2em] uppercase px-2 py-1">
+            {product.tag}
+          </span>
+        </div>
+        {/* Hover overlay */}
+        <motion.div
+          animate={{ opacity: hovered ? 1 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="absolute inset-0 bg-black/50 flex items-end justify-center pb-8"
+        >
+          <span className="text-white text-xs tracking-[0.3em] uppercase border border-white px-6 py-3">
+            Quick View
+          </span>
+        </motion.div>
+      </div>
+
+      {/* Info */}
+      <div className="flex justify-between items-start">
+        <div>
+          <p className="text-white/40 text-[10px] tracking-[0.2em] uppercase mb-1">{product.category}</p>
+          <h3 className="text-white text-sm tracking-wide">{product.name}</h3>
+        </div>
+        <span className="text-white text-sm font-light">{product.price}</span>
+      </div>
+
+      {/* Add to cart */}
+      <motion.button
+        animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 6 }}
+        transition={{ duration: 0.25 }}
+        className="mt-3 w-full py-2.5 border border-white/20 text-white/70 text-[10px] tracking-[0.3em] uppercase hover:bg-white hover:text-black hover:border-white transition-all duration-300"
+      >
+        Add to Cart
+      </motion.button>
+    </motion.div>
+  );
+}
+
+function Collection() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-100px" });
+
+  return (
+    <section id="collection" className="bg-[#0a0a0a] py-28 px-6 md:px-16">
+      <div ref={ref} className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div>
+            <motion.p
+              variants={fadeUp}
+              initial="hidden"
+              animate={inView ? "visible" : "hidden"}
+              custom={0}
+              className="text-white/30 text-[10px] tracking-[0.4em] uppercase mb-3"
+            >
+              SS 2025
+            </motion.p>
+            <motion.h2
+              variants={fadeUp}
+              initial="hidden"
+              animate={inView ? "visible" : "hidden"}
+              custom={1}
+              className="text-white text-4xl md:text-5xl font-light tracking-tight"
+            >
+              Featured Pieces
+            </motion.h2>
+          </div>
+          <motion.a
+            variants={fadeUp}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            custom={2}
+            href="#"
+            whileHover={{ opacity: 0.5 }}
+            className="text-white/50 text-xs tracking-[0.3em] uppercase border-b border-white/20 pb-1 self-start md:self-auto"
+          >
+            View All →
+          </motion.a>
+        </div>
+
+        {/* Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+          {products.map((product, i) => (
+            <ProductCard key={product.id} product={product} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Brand Statement ───────────────────────────────────────────────────────────
+
+function BrandStatement() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-100px" });
+
+  const words = "We dress the ones who move in silence.".split(" ");
+
+  return (
+    <section
+      id="about"
+      className="relative bg-white py-36 px-6 md:px-16 overflow-hidden"
+    >
+      {/* Decorative large text bg */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+        <span
+          className="text-black/[0.03] font-bold uppercase tracking-tight"
+          style={{ fontSize: "clamp(6rem, 22vw, 22rem)" }}
+        >
+          AMUNRA
+        </span>
+      </div>
+
+      <div ref={ref} className="max-w-5xl mx-auto relative z-10">
+        <motion.p
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          custom={0}
+          className="text-black/40 text-[10px] tracking-[0.5em] uppercase mb-12"
+        >
+          The Manifesto
+        </motion.p>
+
+        <div className="overflow-hidden">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            className="flex flex-wrap gap-x-4 gap-y-1"
+          >
+            {words.map((word, i) => (
+              <motion.span
+                key={i}
+                variants={fadeUp}
+                custom={i * 0.5}
+                className="text-black text-4xl md:text-6xl lg:text-7xl font-light tracking-tight leading-tight"
+              >
+                {word}
+              </motion.span>
+            ))}
+          </motion.div>
+        </div>
+
+        <motion.p
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          custom={6}
+          className="text-black/50 text-sm tracking-wide leading-relaxed mt-12 max-w-xl"
+        >
+          AMUNRA was born from the void between excess and restraint. Every garment
+          is a statement of precision — cut for those who understand that true power
+          needs no colour.
+        </motion.p>
+
+        <motion.a
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          custom={7}
+          href="#"
+          whileHover={{ paddingLeft: "2.5rem" }}
+          className="inline-flex items-center gap-4 mt-12 text-black text-xs tracking-[0.3em] uppercase transition-all duration-300"
+        >
+          <span className="w-12 h-px bg-black inline-block" />
+          Read Our Story
+        </motion.a>
+      </div>
+    </section>
+  );
+}
+
+// ─── Lookbook Strip ────────────────────────────────────────────────────────────
+
+const lookbookItems = [
+  { id: 1, label: "Look 01", shade: "#111", tone: "#1c1c1c" },
+  { id: 2, label: "Look 02", shade: "#0d0d0d", tone: "#1a1a1a" },
+  { id: 3, label: "Look 03", shade: "#141414", tone: "#202020" },
+  { id: 4, label: "Look 04", shade: "#0f0f0f", tone: "#1d1d1d" },
+  { id: 5, label: "Look 05", shade: "#121212", tone: "#1e1e1e" },
+];
+
+function Lookbook() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+
+  return (
+    <section id="lookbook" className="bg-[#0a0a0a] py-24 overflow-hidden">
+      <div ref={ref} className="px-6 md:px-16 mb-12">
+        <motion.p
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          custom={0}
+          className="text-white/30 text-[10px] tracking-[0.4em] uppercase mb-3"
+        >
+          Campaign
+        </motion.p>
+        <motion.h2
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          custom={1}
+          className="text-white text-4xl md:text-5xl font-light tracking-tight"
+        >
+          Lookbook SS25
+        </motion.h2>
+      </div>
+
+      {/* Horizontal scroll strip */}
+      <div
+        ref={containerRef}
+        className="flex gap-4 px-6 md:px-16 overflow-x-auto pb-4 cursor-grab active:cursor-grabbing"
+        style={{ scrollbarWidth: "none" }}
+      >
+        {lookbookItems.map((item, i) => (
+          <motion.div
+            key={item.id}
+            variants={fadeUp}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            custom={i * 1.2}
+            className="flex-none relative overflow-hidden"
+            style={{
+              width: "clamp(220px, 30vw, 400px)",
+              height: "clamp(300px, 45vw, 560px)",
+              background: item.shade,
+            }}
+            whileHover={{ scale: 0.98 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div
+              className="absolute inset-0 opacity-10"
+              style={{
+                background: `radial-gradient(ellipse at 30% 40%, ${item.tone}, transparent 70%)`,
+              }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span
+                className="text-white/5 font-bold uppercase tracking-widest select-none"
+                style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
+              >
+                AMUNRA
+              </span>
+            </div>
+            <div className="absolute bottom-5 left-5">
+              <span className="text-white/60 text-[10px] tracking-[0.3em] uppercase">{item.label}</span>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─── Stats ─────────────────────────────────────────────────────────────────────
+
+function Stats() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+
+  const stats = [
+    { value: "2019", label: "Founded" },
+    { value: "42+", label: "Countries Shipped" },
+    { value: "100%", label: "Ethically Made" },
+    { value: "SS25", label: "Active Season" },
+  ];
+
+  return (
+    <section className="bg-[#0f0f0f] border-t border-white/5 py-24 px-6 md:px-16">
+      <div ref={ref} className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12">
+        {stats.map((stat, i) => (
+          <motion.div
+            key={stat.label}
+            variants={fadeUp}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            custom={i * 1.5}
+            className="text-center"
+          >
+            <p className="text-white text-4xl md:text-5xl font-light tracking-tight mb-2">{stat.value}</p>
+            <p className="text-white/30 text-[10px] tracking-[0.3em] uppercase">{stat.label}</p>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─── Newsletter ────────────────────────────────────────────────────────────────
+
+function Newsletter() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubmitted(true);
+    }
+  };
+
+  return (
+    <section id="contact" className="bg-white py-28 px-6 md:px-16">
+      <div ref={ref} className="max-w-2xl mx-auto text-center">
+        <motion.p
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          custom={0}
+          className="text-black/40 text-[10px] tracking-[0.5em] uppercase mb-6"
+        >
+          Inner Circle
+        </motion.p>
+        <motion.h2
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          custom={1}
+          className="text-black text-4xl md:text-5xl font-light tracking-tight mb-4"
+        >
+          Enter the Void
+        </motion.h2>
+        <motion.p
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          custom={2}
+          className="text-black/40 text-sm tracking-wide mb-12"
+        >
+          Early access to drops. No noise. Just AMUNRA.
+        </motion.p>
+
+        <motion.form
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          custom={3}
+          onSubmit={handleSubmit}
+          className="flex flex-col sm:flex-row gap-0 border border-black"
+        >
+          <AnimatePresence mode="wait">
+            {!submitted ? (
+              <>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="YOUR EMAIL ADDRESS"
+                  className="flex-1 bg-transparent px-6 py-4 text-black text-xs tracking-[0.2em] uppercase placeholder:text-black/30 outline-none"
+                  required
+                />
+                <motion.button
+                  type="submit"
+                  whileHover={{ backgroundColor: "#0a0a0a", color: "#fff" }}
+                  transition={{ duration: 0.25 }}
+                  className="bg-black text-white text-xs tracking-[0.3em] uppercase px-8 py-4 border-t sm:border-t-0 sm:border-l border-black transition-all duration-300"
+                >
+                  Join
+                </motion.button>
+              </>
+            ) : (
+              <motion.p
+                key="success"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex-1 px-6 py-4 text-black/60 text-xs tracking-[0.3em] uppercase text-center"
+              >
+                You&apos;re in. Welcome to the void.
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </motion.form>
+      </div>
+    </section>
+  );
+}
+
+// ─── Footer ────────────────────────────────────────────────────────────────────
+
+function Footer() {
+  const links = {
+    Shop: ["New Arrivals", "Tops", "Bottoms", "Outerwear", "Accessories"],
+    Info: ["About Us", "Sustainability", "Collaborations", "Press"],
+    Support: ["Sizing Guide", "Returns", "Shipping", "Contact Us"],
+  };
+
+  return (
+    <footer className="bg-[#0a0a0a] border-t border-white/10 pt-20 pb-10 px-6 md:px-16">
+      <div className="max-w-7xl mx-auto">
+        {/* Top grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-1">
+            <p className="text-white text-xl font-bold tracking-[0.3em] uppercase mb-4">AMUNRA</p>
+            <p className="text-white/30 text-xs leading-relaxed tracking-wide max-w-48">
+              Avant-garde clothing for those who move in monochrome.
+            </p>
+            <div className="flex gap-4 mt-6">
+              {["IG", "TK", "X"].map((s) => (
+                <motion.a
+                  key={s}
+                  href="#"
+                  whileHover={{ opacity: 0.5 }}
+                  className="text-white/40 text-[10px] tracking-[0.2em] uppercase border border-white/10 px-3 py-2"
+                >
+                  {s}
+                </motion.a>
+              ))}
+            </div>
+          </div>
+
+          {/* Link columns */}
+          {Object.entries(links).map(([section, items]) => (
+            <div key={section}>
+              <p className="text-white/30 text-[9px] tracking-[0.4em] uppercase mb-5">{section}</p>
+              <ul className="space-y-3">
+                {items.map((item) => (
+                  <li key={item}>
+                    <motion.a
+                      href="#"
+                      whileHover={{ opacity: 0.5, x: 4 }}
+                      className="text-white/60 text-xs tracking-wide transition-all inline-block"
+                    >
+                      {item}
+                    </motion.a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-white/20 text-[10px] tracking-[0.3em] uppercase">
+            © 2026 NutzyCraft. All rights reserved.
+          </p>
+          <div className="flex gap-6">
+            {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((item) => (
+              <motion.a
+                key={item}
+                href="#"
+                whileHover={{ opacity: 0.5 }}
+                className="text-white/20 text-[10px] tracking-[0.2em] uppercase"
+              >
+                {item}
+              </motion.a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="bg-[#0a0a0a] min-h-screen">
+      <Navbar />
+      <Hero />
+      <Marquee />
+      <Collection />
+      <BrandStatement />
+      <Lookbook />
+      <Stats />
+      <Newsletter />
+      <Footer />
+    </main>
   );
 }
