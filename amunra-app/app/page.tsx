@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, useInView, AnimatePresence, animate } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
 // ─── Animation Variants ────────────────────────────────────────────────────────
@@ -31,6 +31,68 @@ const letterVariant = {
   },
 };
 
+// ─── Loader ────────────────────────────────────────────────────────────────────
+
+function Loader({ onComplete }: { onComplete: () => void }) {
+  const letters = "AMUNRA".split("");
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    // Animates the progress from 0 to 100 over 2.5 seconds
+    const controls = animate(0, 100, {
+      duration: 2.2,
+      ease: "linear",
+      onUpdate: (val) => setProgress(val),
+      onComplete: () => {
+        // Brief pause when the bar completes before sliding up
+        setTimeout(onComplete, 400);
+      },
+    });
+
+    return () => controls.stop();
+  }, [onComplete]);
+
+  return (
+    <motion.div
+      key="loader"
+      initial={{ y: 0 }}
+      // Sweeps the loading screen upwards smoothly like in the video
+      exit={{ y: "-100vh", transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } }}
+      className="fixed inset-0 z-[100] bg-[#0a0a0a] flex flex-col items-center justify-center"
+    >
+      <div className="relative inline-flex flex-col items-center">
+        {/* Letters container */}
+        <div className="flex text-white text-3xl md:text-5xl font-bold tracking-[0.3em] uppercase mb-4 pl-[0.3em]">
+          {letters.map((char, index) => {
+            // Calculate at which progress percentage this letter should appear
+            const step = 100 / letters.length;
+            const threshold = index * step;
+            return (
+              <span
+                key={index}
+                className={`transition-opacity duration-150 ${
+                  progress > threshold ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                {char}
+              </span>
+            );
+          })}
+        </div>
+        
+        {/* Progress Bar Container */}
+        <div className="w-full h-[2px] bg-white/10 rounded-full overflow-hidden">
+          {/* The active progress fill */}
+          <motion.div
+            className="h-full bg-white"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 // ─── Navbar ────────────────────────────────────────────────────────────────────
 
 function Navbar() {
@@ -48,7 +110,7 @@ function Navbar() {
       <motion.nav
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: EASE }}
+        transition={{ duration: 0.8, ease: EASE, delay: 0.5 }} // Added slight delay to wait for loader
         className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-6 transition-all duration-500 ${
           scrolled ? "bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/10" : ""
         }`}
@@ -159,7 +221,8 @@ function Hero() {
         <motion.div
           variants={staggerContainer}
           initial="hidden"
-          animate="visible"
+          whileInView="visible"
+          viewport={{ once: true }}
           className="flex overflow-hidden"
           style={{ perspective: "1000px" }}
         >
@@ -183,7 +246,8 @@ function Hero() {
         <motion.p
           variants={fadeUp}
           initial="hidden"
-          animate="visible"
+          whileInView="visible"
+          viewport={{ once: true }}
           custom={7}
           className="text-white/40 text-xs md:text-sm tracking-[0.5em] uppercase mt-6"
         >
@@ -194,7 +258,8 @@ function Hero() {
         <motion.div
           variants={fadeUp}
           initial="hidden"
-          animate="visible"
+          whileInView="visible"
+          viewport={{ once: true }}
           custom={9}
           className="mt-12 flex flex-col sm:flex-row gap-4 items-center"
         >
@@ -803,17 +868,38 @@ function Footer() {
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function Home() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Lock scrolling while the loader is active
+  useEffect(() => {
+    if (isLoading) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isLoading]);
+
   return (
-    <main className="bg-[#0a0a0a] min-h-screen">
-      <Navbar />
-      <Hero />
-      <Marquee />
-      <Collection />
-      <BrandStatement />
-      <Lookbook />
-      <Stats />
-      <Newsletter />
-      <Footer />
-    </main>
+    <>
+      <AnimatePresence>
+        {isLoading && <Loader onComplete={() => setIsLoading(false)} />}
+      </AnimatePresence>
+
+      <main className="bg-[#0a0a0a] min-h-screen">
+        <Navbar />
+        <Hero />
+        <Marquee />
+        <Collection />
+        <BrandStatement />
+        <Lookbook />
+        <Stats />
+        <Newsletter />
+        <Footer />
+      </main>
+    </>
   );
 }
