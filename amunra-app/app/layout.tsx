@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AMUNRA — Define Your Darkness",
-  description: "Avant-garde clothing for those who move in monochrome. AMUNRA — where silence meets style.",
+  title: "yumie — Distinctly Yours",
+  description: "Avant-garde clothing for those who move in monochrome. yumie — where silence meets style.",
 };
 
 export default function RootLayout({

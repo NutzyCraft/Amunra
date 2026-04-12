@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, useInView, AnimatePresence, animate } from "framer-motion";
+import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
 
 // ─── Animation Variants ────────────────────────────────────────────────────────
@@ -31,16 +32,28 @@ const letterVariant = {
   },
 };
 
+function BrandLogo({ className = "h-12 w-auto" }: { className?: string }) {
+  return (
+    <Image
+      src="/Yumie.png"
+      alt="yumie logo"
+      width={220}
+      height={110}
+      priority
+      className={className}
+    />
+  );
+}
+
 // ─── Loader ────────────────────────────────────────────────────────────────────
 
 function Loader({ onComplete }: { onComplete: () => void }) {
-  const letters = "AMUNRA".split("");
+  const letters = "yumie".split("");
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Animates the progress from 0 to 100 over 2.5 seconds
     const controls = animate(0, 100, {
-      duration: 2.2,
+      duration: 2.5,
       ease: "linear",
       onUpdate: (val) => setProgress(val),
       onComplete: () => {
@@ -61,6 +74,7 @@ function Loader({ onComplete }: { onComplete: () => void }) {
       className="fixed inset-0 z-[100] bg-[#0a0a0a] flex flex-col items-center justify-center"
     >
       <div className="relative inline-flex flex-col items-center">
+        <BrandLogo className="h-20 w-auto mb-5 invert" />
         {/* Letters container */}
         <div className="flex text-white text-3xl md:text-5xl font-bold tracking-[0.3em] uppercase mb-4 pl-[0.3em]">
           {letters.map((char, index) => {
@@ -116,8 +130,8 @@ function Navbar() {
         }`}
       >
         {/* Logo */}
-        <a href="#" className="text-white text-xl font-bold tracking-[0.3em] uppercase">
-          AMUNRA
+        <a href="#" className="text-white">
+          <BrandLogo className="h-11 w-auto invert" />
         </a>
 
         {/* Desktop Nav */}
@@ -201,7 +215,7 @@ function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
-  const letters = "AMUNRA".split("");
+  const letters = "yumie".split("");
 
   return (
     <section ref={ref} className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0a0a0a]">
@@ -251,7 +265,7 @@ function Hero() {
           custom={7}
           className="text-white/40 text-xs md:text-sm tracking-[0.5em] uppercase mt-6"
         >
-          Define Your Darkness
+          Distinctly Yours
         </motion.p>
 
         {/* CTA */}
@@ -302,7 +316,7 @@ function Hero() {
 // ─── Marquee ───────────────────────────────────────────────────────────────────
 
 function Marquee() {
-  const text = "NEW COLLECTION · SS25 · LIMITED DROPS · AMUNRA · DEFINE YOUR DARKNESS · ";
+  const text = "NEW COLLECTION · SS25 · LIMITED DROPS · YUMIE · DISTINCTLY YOURS · ";
   const repeated = text.repeat(6);
 
   return (
@@ -400,7 +414,7 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
             className="text-white/5 font-bold tracking-widest uppercase select-none"
             style={{ fontSize: "clamp(2rem, 6vw, 5rem)" }}
           >
-            AMUNRA
+            yumie
           </span>
         </div>
         {/* Tag */}
@@ -514,7 +528,7 @@ function BrandStatement() {
           className="text-black/[0.03] font-bold uppercase tracking-tight"
           style={{ fontSize: "clamp(6rem, 22vw, 22rem)" }}
         >
-          AMUNRA
+          yumie
         </span>
       </div>
 
@@ -556,7 +570,7 @@ function BrandStatement() {
           custom={6}
           className="text-black/50 text-sm tracking-wide leading-relaxed mt-12 max-w-xl"
         >
-          AMUNRA was born from the void between excess and restraint. Every garment
+          yumie was born from the void between excess and restraint. Every garment
           is a statement of precision — cut for those who understand that true power
           needs no colour.
         </motion.p>
@@ -649,7 +663,7 @@ function Lookbook() {
                 className="text-white/5 font-bold uppercase tracking-widest select-none"
                 style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
               >
-                AMUNRA
+                yumie
               </span>
             </div>
             <div className="absolute bottom-5 left-5">
@@ -739,7 +753,7 @@ function Newsletter() {
           custom={2}
           className="text-black/40 text-sm tracking-wide mb-12"
         >
-          Early access to drops. No noise. Just AMUNRA.
+          Early access to drops. No noise. Just yumie.
         </motion.p>
 
         <motion.form
@@ -803,7 +817,9 @@ function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <p className="text-white text-xl font-bold tracking-[0.3em] uppercase mb-4">AMUNRA</p>
+            <div className="mb-4">
+              <BrandLogo className="h-12 w-auto invert" />
+            </div>
             <p className="text-white/30 text-xs leading-relaxed tracking-wide max-w-48">
               Avant-garde clothing for those who move in monochrome.
             </p>
@@ -845,7 +861,7 @@ function Footer() {
         {/* Divider */}
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-white/20 text-[10px] tracking-[0.3em] uppercase">
-            © 2026 NutzyCraft. All rights reserved.
+            © 2026 yumie. All rights reserved.
           </p>
           <div className="flex gap-6">
             {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((item) => (
