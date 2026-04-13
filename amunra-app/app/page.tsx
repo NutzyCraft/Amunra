@@ -74,7 +74,7 @@ function Loader({ onComplete }: { onComplete: () => void }) {
       className="fixed inset-0 z-[100] bg-[#0a0a0a] flex flex-col items-center justify-center"
     >
       <div className="relative inline-flex flex-col items-center">
-        <BrandLogo className="h-20 w-auto mb-5 invert" />
+        <BrandLogo className="h-20 w-auto mb-5" />
         {/* Letters container */}
         <div className="flex text-white text-3xl md:text-5xl font-bold tracking-[0.3em] uppercase mb-4 pl-[0.3em]">
           {letters.map((char, index) => {
@@ -112,6 +112,12 @@ function Loader({ onComplete }: { onComplete: () => void }) {
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const navItems = [
+    { label: "Collection", href: "#collection" },
+    { label: "New Arrivals", href: "#new-arrivals" },
+    { label: "About", href: "#about" },
+    { label: "Login", href: "/auth/login" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -131,19 +137,19 @@ function Navbar() {
       >
         {/* Logo */}
         <a href="#" className="text-white">
-          <BrandLogo className="h-11 w-auto invert" />
+          <BrandLogo className="h-11 w-auto" />
         </a>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-10">
-          {["Collection", "Lookbook", "About", "Contact"].map((item) => (
+          {navItems.map((item) => (
             <motion.a
-              key={item}
-              href={`#${item.toLowerCase()}`}
+              key={item.label}
+              href={item.href}
               whileHover={{ opacity: 0.5 }}
               className="text-white/70 text-xs tracking-[0.2em] uppercase transition-all"
             >
-              {item}
+              {item.label}
             </motion.a>
           ))}
         </div>
@@ -187,17 +193,17 @@ function Navbar() {
             transition={{ duration: 0.5, ease: EASE }}
             className="fixed inset-0 z-40 bg-[#0a0a0a] flex flex-col items-center justify-center gap-10"
           >
-            {["Collection", "Lookbook", "About", "Contact"].map((item, i) => (
+            {navItems.map((item, i) => (
               <motion.a
-                key={item}
-                href={`#${item.toLowerCase()}`}
+                key={item.label}
+                href={item.href}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + i * 0.08 }}
                 onClick={() => setMenuOpen(false)}
                 className="text-white text-4xl font-light tracking-[0.3em] uppercase hover:opacity-40 transition-opacity"
               >
-                {item}
+                {item.label}
               </motion.a>
             ))}
           </motion.div>
@@ -592,85 +598,98 @@ function BrandStatement() {
   );
 }
 
-// ─── Lookbook Strip ────────────────────────────────────────────────────────────
+// ─── New Arrivals ──────────────────────────────────────────────────────────────
 
-const lookbookItems = [
-  { id: 1, label: "Look 01", shade: "#111", tone: "#1c1c1c" },
-  { id: 2, label: "Look 02", shade: "#0d0d0d", tone: "#1a1a1a" },
-  { id: 3, label: "Look 03", shade: "#141414", tone: "#202020" },
-  { id: 4, label: "Look 04", shade: "#0f0f0f", tone: "#1d1d1d" },
-  { id: 5, label: "Look 05", shade: "#121212", tone: "#1e1e1e" },
+const newArrivals = [
+  { id: 1, label: "Drop 01", name: "Noir Panel Tee", tag: "NEW", shade: "#111", tone: "#1c1c1c" },
+  { id: 2, label: "Drop 02", name: "Mono Utility Vest", tag: "LIMITED", shade: "#0d0d0d", tone: "#1a1a1a" },
+  { id: 3, label: "Drop 03", name: "Shadow Pleat Trouser", tag: "NEW", shade: "#141414", tone: "#202020" },
+  { id: 4, label: "Drop 04", name: "Distort Knit Zip", tag: "RESTOCK", shade: "#0f0f0f", tone: "#1d1d1d" },
 ];
 
-function Lookbook() {
-  const containerRef = useRef<HTMLDivElement>(null);
+function NewArrivals() {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="lookbook" className="bg-[#0a0a0a] py-24 overflow-hidden">
-      <div ref={ref} className="px-6 md:px-16 mb-12">
-        <motion.p
-          variants={fadeUp}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-          custom={0}
-          className="text-white/30 text-[10px] tracking-[0.4em] uppercase mb-3"
-        >
-          Campaign
-        </motion.p>
-        <motion.h2
-          variants={fadeUp}
-          initial="hidden"
-          animate={inView ? "visible" : "hidden"}
-          custom={1}
-          className="text-white text-4xl md:text-5xl font-light tracking-tight"
-        >
-          Lookbook SS25
-        </motion.h2>
-      </div>
-
-      {/* Horizontal scroll strip */}
-      <div
-        ref={containerRef}
-        className="flex gap-4 px-6 md:px-16 overflow-x-auto pb-4 cursor-grab active:cursor-grabbing"
-        style={{ scrollbarWidth: "none" }}
-      >
-        {lookbookItems.map((item, i) => (
-          <motion.div
-            key={item.id}
+    <section id="new-arrivals" className="bg-[#0a0a0a] py-24 px-6 md:px-16">
+      <div ref={ref} className="max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+          <div>
+            <motion.p
+              variants={fadeUp}
+              initial="hidden"
+              animate={inView ? "visible" : "hidden"}
+              custom={0}
+              className="text-white/30 text-[10px] tracking-[0.4em] uppercase mb-3"
+            >
+              Just Landed
+            </motion.p>
+            <motion.h2
+              variants={fadeUp}
+              initial="hidden"
+              animate={inView ? "visible" : "hidden"}
+              custom={1}
+              className="text-white text-4xl md:text-5xl font-light tracking-tight"
+            >
+              New Arrivals
+            </motion.h2>
+          </div>
+          <motion.a
             variants={fadeUp}
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
-            custom={i * 1.2}
-            className="flex-none relative overflow-hidden"
-            style={{
-              width: "clamp(220px, 30vw, 400px)",
-              height: "clamp(300px, 45vw, 560px)",
-              background: item.shade,
-            }}
-            whileHover={{ scale: 0.98 }}
-            transition={{ duration: 0.4 }}
+            custom={2}
+            href="#"
+            whileHover={{ opacity: 0.5 }}
+            className="text-white/50 text-xs tracking-[0.3em] uppercase border-b border-white/20 pb-1 self-start md:self-auto"
           >
-            <div
-              className="absolute inset-0 opacity-10"
-              style={{
-                background: `radial-gradient(ellipse at 30% 40%, ${item.tone}, transparent 70%)`,
-              }}
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span
-                className="text-white/5 font-bold uppercase tracking-widest select-none"
-                style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
+            Shop Drops →
+          </motion.a>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          {newArrivals.map((item, i) => (
+            <motion.article
+              key={item.id}
+              variants={fadeUp}
+              initial="hidden"
+              animate={inView ? "visible" : "hidden"}
+              custom={i * 1.3}
+              className="group"
+            >
+              <div
+                className="relative overflow-hidden aspect-[4/5] mb-4"
+                style={{ background: item.shade }}
               >
-                yumie
-              </span>
-            </div>
-            <div className="absolute bottom-5 left-5">
-              <span className="text-white/60 text-[10px] tracking-[0.3em] uppercase">{item.label}</span>
-            </div>
-          </motion.div>
-        ))}
+                <div
+                  className="absolute inset-0 opacity-10"
+                  style={{
+                    background: `radial-gradient(ellipse at 30% 40%, ${item.tone}, transparent 70%)`,
+                  }}
+                />
+                <div className="absolute top-4 left-4">
+                  <span className="text-black bg-white text-[9px] tracking-[0.2em] uppercase px-2 py-1">
+                    {item.tag}
+                  </span>
+                </div>
+                <div className="absolute bottom-4 left-4">
+                  <span className="text-white/45 text-[10px] tracking-[0.3em] uppercase">{item.label}</span>
+                </div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                  className="absolute inset-0 bg-black/50 flex items-center justify-center"
+                >
+                  <span className="text-white text-[10px] tracking-[0.3em] uppercase border border-white px-5 py-2">
+                    Quick View
+                  </span>
+                </motion.div>
+              </div>
+              <h3 className="text-white text-sm tracking-wide">{item.name}</h3>
+            </motion.article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -818,7 +837,7 @@ function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="mb-4">
-              <BrandLogo className="h-12 w-auto invert" />
+              <BrandLogo className="h-12 w-auto" />
             </div>
             <p className="text-white/30 text-xs leading-relaxed tracking-wide max-w-48">
               Avant-garde clothing for those who move in monochrome.
@@ -911,7 +930,7 @@ export default function Home() {
         <Marquee />
         <Collection />
         <BrandStatement />
-        <Lookbook />
+        <NewArrivals />
         <Stats />
         <Newsletter />
         <Footer />
