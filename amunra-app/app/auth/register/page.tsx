@@ -2,15 +2,64 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export default function RegisterPage() {
+	const router = useRouter();
 	const [fullName, setFullName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState("");
+	const [success, setSuccess] = useState(false);
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setError("");
+		setIsLoading(true);
+
+		try {
+			const response = await fetch("/api/auth", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					fullName,
+					email,
+					password,
+					confirmPassword,
+				}),
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				setError(data.message || "Registration failed. Please try again.");
+				return;
+			}
+
+			setSuccess(true);
+			setFullName("");
+			setEmail("");
+			setPassword("");
+			setConfirmPassword("");
+			
+			// Redirect to login page after 2 seconds
+			setTimeout(() => {
+				router.push("/auth/login");
+			}, 2000);
+		} catch (err) {
+			setError("An error occurred. Please try again.");
+			console.error(err);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	return (
 		<section className="min-h-[calc(100vh-89px)] px-6 md:px-10 py-12 md:py-20">
@@ -24,7 +73,7 @@ export default function RegisterPage() {
 					<p className="text-white/35 text-[10px] tracking-[0.45em] uppercase mb-5">Join Yumie</p>
 					<h1 className="text-white text-4xl md:text-5xl font-light tracking-tight mb-6">Create Account</h1>
 					<p className="text-white/50 text-sm leading-relaxed max-w-md">
-						Sign up to get insider access to new drops, save your favorites, and track every order in one place.
+						Sign up to get access to new drops and track every order in one place.
 					</p>
 
 					<div className="mt-12 space-y-5">
@@ -45,7 +94,19 @@ export default function RegisterPage() {
 					transition={{ duration: 0.7, ease: EASE, delay: 0.08 }}
 					className="border border-white/10 bg-[#0f0f0f] p-8 md:p-10"
 				>
-					<form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+					<form className="space-y-5" onSubmit={handleSubmit}>
+						{error && (
+							<div className="bg-red-500/10 border border-red-500/30 p-3 rounded text-red-400 text-xs">
+								{error}
+							</div>
+						)}
+
+						{success && (
+							<div className="bg-green-500/10 border border-green-500/30 p-3 rounded text-green-400 text-xs">
+								Account created successfully! Redirecting to login...
+							</div>
+						)}
+
 						<div>
 							<label className="block text-white/35 text-[10px] tracking-[0.35em] uppercase mb-3">Full Name</label>
 							<input
@@ -54,7 +115,8 @@ export default function RegisterPage() {
 								onChange={(e) => setFullName(e.target.value)}
 								placeholder="Your name"
 								required
-								className="w-full bg-transparent border border-white/15 px-4 py-3 text-white text-sm placeholder:text-white/25 outline-none focus:border-white/45 transition-colors"
+								disabled={isLoading}
+								className="w-full bg-transparent border border-white/15 px-4 py-3 text-white text-sm placeholder:text-white/25 outline-none focus:border-white/45 transition-colors disabled:opacity-50"
 							/>
 						</div>
 
@@ -66,7 +128,8 @@ export default function RegisterPage() {
 								onChange={(e) => setEmail(e.target.value)}
 								placeholder="you@example.com"
 								required
-								className="w-full bg-transparent border border-white/15 px-4 py-3 text-white text-sm placeholder:text-white/25 outline-none focus:border-white/45 transition-colors"
+								disabled={isLoading}
+								className="w-full bg-transparent border border-white/15 px-4 py-3 text-white text-sm placeholder:text-white/25 outline-none focus:border-white/45 transition-colors disabled:opacity-50"
 							/>
 						</div>
 
@@ -78,7 +141,8 @@ export default function RegisterPage() {
 								onChange={(e) => setPassword(e.target.value)}
 								placeholder="Create password"
 								required
-								className="w-full bg-transparent border border-white/15 px-4 py-3 text-white text-sm placeholder:text-white/25 outline-none focus:border-white/45 transition-colors"
+								disabled={isLoading}
+								className="w-full bg-transparent border border-white/15 px-4 py-3 text-white text-sm placeholder:text-white/25 outline-none focus:border-white/45 transition-colors disabled:opacity-50"
 							/>
 						</div>
 
@@ -90,7 +154,8 @@ export default function RegisterPage() {
 								onChange={(e) => setConfirmPassword(e.target.value)}
 								placeholder="Confirm password"
 								required
-								className="w-full bg-transparent border border-white/15 px-4 py-3 text-white text-sm placeholder:text-white/25 outline-none focus:border-white/45 transition-colors"
+								disabled={isLoading}
+								className="w-full bg-transparent border border-white/15 px-4 py-3 text-white text-sm placeholder:text-white/25 outline-none focus:border-white/45 transition-colors disabled:opacity-50"
 							/>
 						</div>
 
@@ -101,11 +166,12 @@ export default function RegisterPage() {
 
 						<motion.button
 							type="submit"
-							whileHover={{ backgroundColor: "#fff", color: "#0a0a0a" }}
-							whileTap={{ scale: 0.99 }}
-							className="w-full mt-2 border border-white text-white py-3.5 text-xs tracking-[0.3em] uppercase transition-colors"
+							disabled={isLoading}
+							whileHover={!isLoading ? { backgroundColor: "#fff", color: "#0a0a0a" } : {}}
+							whileTap={!isLoading ? { scale: 0.99 } : {}}
+							className="w-full mt-2 border border-white text-white py-3.5 text-xs tracking-[0.3em] uppercase transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 						>
-							Create Account
+							{isLoading ? "Creating Account..." : "Create Account"}
 						</motion.button>
 
 						<p className="text-center text-white/45 text-xs tracking-wide pt-3">
