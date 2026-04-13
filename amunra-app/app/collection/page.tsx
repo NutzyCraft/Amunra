@@ -157,6 +157,15 @@ function CategoryCard({
 }
 
 function ProductPreview({ item, categoryKey }: { item: CollectionItem; categoryKey: CategoryKey }) {
+	const detailHref = {
+		pathname: `/collection/product/${categoryKey}`,
+		query: {
+			name: item.name,
+			price: item.price,
+			type: item.category,
+		},
+	};
+
 	return (
 		<motion.div
 			key={item.name}
@@ -203,7 +212,7 @@ function ProductPreview({ item, categoryKey }: { item: CollectionItem; categoryK
 					<h4 className="text-black text-xl md:text-2xl font-light tracking-tight">{item.name}</h4>
 				</div>
 				<Link
-					href={`/collection/${categoryKey}`}
+					href={detailHref}
 					className="inline-flex items-center justify-center border border-black px-5 py-3 text-xs tracking-[0.3em] uppercase transition-all duration-300 hover:bg-black hover:text-white"
 				>
 					Shop Now
@@ -217,6 +226,17 @@ function ProductGrid({ items, categoryKey }: { items: CollectionItem[]; category
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 			{items.map((item) => (
+				(() => {
+					const detailHref = {
+						pathname: `/collection/product/${categoryKey}`,
+						query: {
+							name: item.name,
+							price: item.price,
+							type: item.category,
+						},
+					};
+
+					return (
 				<div key={item.name} className="group border border-black/10 bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)]">
 					<div className={`relative overflow-hidden aspect-[4/5] bg-gradient-to-br ${item.accent} mb-4`}>
 						<div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.45),_transparent_40%)]" />
@@ -231,12 +251,14 @@ function ProductGrid({ items, categoryKey }: { items: CollectionItem[]; category
 					<p className="text-black/40 text-[10px] tracking-[0.3em] uppercase mb-1">{item.category}</p>
 					<h4 className={`${playfair.className} text-2xl text-black mb-3`}>{item.name}</h4>
 					<Link
-						href={`/collection/${categoryKey}`}
+						href={detailHref}
 						className="block w-full text-center border border-black px-4 py-3 text-xs tracking-[0.3em] uppercase transition-all duration-300 hover:bg-black hover:text-white"
 					>
 						View Item
 					</Link>
 				</div>
+					);
+				})()
 			))}
 		</div>
 	);

@@ -16,6 +16,15 @@ const products = [
 ];
 
 export default function WomenCollectionPage() {
+	const getProductHref = (product: { name: string; price: string; category: string }) => ({
+		pathname: "/collection/product/women",
+		query: {
+			name: product.name,
+			price: product.price,
+			type: product.category,
+		},
+	});
+
 	return (
 		<main className="min-h-screen bg-white text-black px-6 md:px-10 py-10 md:py-14">
 			<div className="max-w-7xl mx-auto">
@@ -51,9 +60,12 @@ export default function WomenCollectionPage() {
 
 							<p className="text-black/40 text-[10px] tracking-[0.3em] uppercase mb-1">{product.category}</p>
 							<h2 className={`${playfair.className} text-2xl mb-3`}>{product.name}</h2>
-							<button className="w-full border border-black px-4 py-3 text-xs tracking-[0.3em] uppercase hover:bg-black hover:text-white transition-all">
+							<Link
+								href={getProductHref(product)}
+								className="block w-full text-center border border-black px-4 py-3 text-xs tracking-[0.3em] uppercase hover:bg-black hover:text-white transition-all"
+							>
 								View Item
-							</button>
+							</Link>
 						</article>
 					))}
 				</div>
