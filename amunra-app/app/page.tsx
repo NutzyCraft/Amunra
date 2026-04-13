@@ -121,9 +121,9 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navItems = [
-    { label: "Collection", href: "#collection" },
-    { label: "New Arrivals", href: "#new-arrivals" },
-    { label: "About", href: "#about" },
+    { label: "Collection", href: "/collection" },
+    { label: "New Arrivals", href: "#/new-arrivals" },
+    { label: "About", href: "#/about" },
     { label: "Login", href: "/auth/login" },
   ];
 
@@ -140,11 +140,11 @@ function Navbar() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: EASE, delay: 0.5 }} // Added slight delay to wait for loader
         className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-6 transition-all duration-500 ${
-          scrolled ? "bg-white/90 backdrop-blur-md border-b border-black/10" : ""
+          scrolled ? "bg-black/90 backdrop-blur-md border-b border-white/10" : "bg-black/90 backdrop-blur-md border-b border-white/10"
         }`}
       >
         {/* Logo */}
-        <a href="#" className="text-black">
+        <a href="#" className="text-white">
           <BrandLogo className="h-11 w-auto" />
         </a>
 
@@ -155,7 +155,7 @@ function Navbar() {
               key={item.label}
               href={item.href}
               whileHover={{ opacity: 0.5 }}
-              className="text-black/70 text-xs tracking-[0.2em] uppercase transition-all"
+              className="text-white/70 text-xs tracking-[0.2em] uppercase transition-all"
             >
               {item.label}
             </motion.a>
@@ -166,7 +166,7 @@ function Navbar() {
         <div className="flex items-center gap-6">
           <motion.button
             whileHover={{ scale: 1.05 }}
-            className="hidden md:block text-black/70 text-xs tracking-[0.2em] uppercase border border-black/20 px-5 py-2 hover:bg-black hover:text-white transition-all duration-300"
+            className="hidden md:block text-white/70 text-xs tracking-[0.2em] uppercase border border-white/20 px-5 py-2 hover:bg-white hover:text-black transition-all duration-300"
           >
             Cart (0)
           </motion.button>
@@ -177,15 +177,15 @@ function Navbar() {
           >
             <motion.span
               animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-              className="block w-6 h-px bg-black"
+              className="block w-6 h-px bg-white"
             />
             <motion.span
               animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="block w-6 h-px bg-black"
+              className="block w-6 h-px bg-white"
             />
             <motion.span
               animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-              className="block w-6 h-px bg-black"
+              className="block w-6 h-px bg-white"
             />
           </button>
         </div>
@@ -199,7 +199,7 @@ function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ duration: 0.5, ease: EASE }}
-            className="fixed inset-0 z-40 bg-white flex flex-col items-center justify-center gap-10"
+            className="fixed inset-0 z-40 bg-black flex flex-col items-center justify-center gap-10"
           >
             {navItems.map((item, i) => (
               <motion.a
@@ -209,7 +209,7 @@ function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + i * 0.08 }}
                 onClick={() => setMenuOpen(false)}
-                className="text-black text-4xl font-light tracking-[0.3em] uppercase hover:opacity-40 transition-opacity"
+                className="text-white text-4xl font-light tracking-[0.3em] uppercase hover:opacity-40 transition-opacity"
               >
                 {item.label}
               </motion.a>
@@ -260,8 +260,8 @@ function Hero() {
               variants={letterVariant}
               className="text-black font-bold uppercase leading-none select-none"
               style={{
-                fontSize: "clamp(5rem, 18vw, 8rem)",
-                letterSpacing: "-0.02em",
+                fontSize: "clamp(15rem, 8vw, 20rem)",
+                letterSpacing: "0.3em",
                 fontFamily: playfair.style.fontFamily,
               }}
             >
@@ -292,7 +292,7 @@ function Hero() {
           className="mt-12 flex flex-col sm:flex-row gap-4 items-center"
         >
           <motion.a
-            href="#collection"
+            href="/collection"
             whileHover={{ backgroundColor: "#0a0a0a", color: "#fff" }}
             whileTap={{ scale: 0.97 }}
             className="px-10 py-4 border border-black text-black text-xs tracking-[0.3em] uppercase transition-all duration-300"
@@ -504,7 +504,7 @@ function Collection() {
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
             custom={2}
-            href="#"
+            href="/collection"
             whileHover={{ opacity: 0.5 }}
             className="text-black/50 text-xs tracking-[0.3em] uppercase border-b border-black/20 pb-1 self-start md:self-auto"
           >
@@ -838,7 +838,7 @@ function Footer() {
   };
 
   return (
-    <footer className="bg-white border-t border-black/10 pt-20 pb-10 px-6 md:px-16">
+    <footer className="bg-black border-t border-white/10 pt-20 pb-10 px-6 md:px-16">
       <div className="max-w-7xl mx-auto">
         {/* Top grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
@@ -847,7 +847,7 @@ function Footer() {
             <div className="mb-4">
               <BrandLogo className="h-12 w-auto" />
             </div>
-            <p className="text-black/30 text-xs leading-relaxed tracking-wide max-w-48">
+            <p className="text-white/30 text-xs leading-relaxed tracking-wide max-w-48">
               Avant-garde clothing for those who move in monochrome.
             </p>
             <div className="flex gap-4 mt-6">
@@ -856,7 +856,7 @@ function Footer() {
                   key={s}
                   href="#"
                   whileHover={{ opacity: 0.5 }}
-                  className="text-black/40 text-[10px] tracking-[0.2em] uppercase border border-black/10 px-3 py-2"
+                  className="text-white/40 text-[10px] tracking-[0.2em] uppercase border border-white/10 px-3 py-2"
                 >
                   {s}
                 </motion.a>
@@ -867,14 +867,14 @@ function Footer() {
           {/* Link columns */}
           {Object.entries(links).map(([section, items]) => (
             <div key={section}>
-              <p className="text-black/30 text-[9px] tracking-[0.4em] uppercase mb-5">{section}</p>
+              <p className="text-white/30 text-[9px] tracking-[0.4em] uppercase mb-5">{section}</p>
               <ul className="space-y-3">
                 {items.map((item) => (
                   <li key={item}>
                     <motion.a
                       href="#"
                       whileHover={{ opacity: 0.5, x: 4 }}
-                      className="text-black/60 text-xs tracking-wide transition-all inline-block"
+                      className="text-white/60 text-xs tracking-wide transition-all inline-block"
                     >
                       {item}
                     </motion.a>
@@ -886,8 +886,8 @@ function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-black/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-black/20 text-[10px] tracking-[0.3em] uppercase">
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-white/20 text-[10px] tracking-[0.3em] uppercase">
             © 2026 yumie. All rights reserved.
           </p>
           <div className="flex gap-6">
@@ -896,7 +896,7 @@ function Footer() {
                 key={item}
                 href="#"
                 whileHover={{ opacity: 0.5 }}
-                className="text-black/20 text-[10px] tracking-[0.2em] uppercase"
+                className="text-white/20 text-[10px] tracking-[0.2em] uppercase"
               >
                 {item}
               </motion.a>
