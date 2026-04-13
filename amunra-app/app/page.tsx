@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform, useInView, AnimatePresence, animate } from "framer-motion";
 import Image from "next/image";
+import { Playfair_Display } from "next/font/google";
 import { useRef, useState, useEffect } from "react";
 
 // ─── Animation Variants ────────────────────────────────────────────────────────
@@ -32,16 +33,23 @@ const letterVariant = {
   },
 };
 
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 function BrandLogo({ className = "h-12 w-auto" }: { className?: string }) {
   return (
-    <Image
-      src="/Yumie.png"
-      alt="yumie logo"
-      width={220}
-      height={110}
-      priority
-      className={className}
-    />
+    <div className={`inline-flex items-center justify-center bg-white border border-black/10 p-1 shadow-sm ${className}`}>
+      <Image
+        src="/Yumie.png"
+        alt="yumie logo"
+        width={220}
+        height={110}
+        priority
+        className="h-full w-auto"
+      />
+    </div>
   );
 }
 
@@ -71,12 +79,12 @@ function Loader({ onComplete }: { onComplete: () => void }) {
       initial={{ y: 0 }}
       // Sweeps the loading screen upwards smoothly like in the video
       exit={{ y: "-100vh", transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } }}
-      className="fixed inset-0 z-[100] bg-[#0a0a0a] flex flex-col items-center justify-center"
+      className="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center"
     >
       <div className="relative inline-flex flex-col items-center">
         <BrandLogo className="h-20 w-auto mb-5" />
         {/* Letters container */}
-        <div className="flex text-white text-3xl md:text-5xl font-bold tracking-[0.3em] uppercase mb-4 pl-[0.3em]">
+        <div className={`${playfair.className} flex text-black text-3xl md:text-5xl font-bold tracking-[0.3em] uppercase mb-4 pl-[0.3em]`}>
           {letters.map((char, index) => {
             // Calculate at which progress percentage this letter should appear
             const step = 100 / letters.length;
@@ -95,10 +103,10 @@ function Loader({ onComplete }: { onComplete: () => void }) {
         </div>
         
         {/* Progress Bar Container */}
-        <div className="w-full h-[2px] bg-white/10 rounded-full overflow-hidden">
+        <div className="w-full h-[2px] bg-black/10 rounded-full overflow-hidden">
           {/* The active progress fill */}
           <motion.div
-            className="h-full bg-white"
+            className="h-full bg-black"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -132,11 +140,11 @@ function Navbar() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: EASE, delay: 0.5 }} // Added slight delay to wait for loader
         className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-6 transition-all duration-500 ${
-          scrolled ? "bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/10" : ""
+          scrolled ? "bg-white/90 backdrop-blur-md border-b border-black/10" : ""
         }`}
       >
         {/* Logo */}
-        <a href="#" className="text-white">
+        <a href="#" className="text-black">
           <BrandLogo className="h-11 w-auto" />
         </a>
 
@@ -147,7 +155,7 @@ function Navbar() {
               key={item.label}
               href={item.href}
               whileHover={{ opacity: 0.5 }}
-              className="text-white/70 text-xs tracking-[0.2em] uppercase transition-all"
+              className="text-black/70 text-xs tracking-[0.2em] uppercase transition-all"
             >
               {item.label}
             </motion.a>
@@ -158,7 +166,7 @@ function Navbar() {
         <div className="flex items-center gap-6">
           <motion.button
             whileHover={{ scale: 1.05 }}
-            className="hidden md:block text-white/70 text-xs tracking-[0.2em] uppercase border border-white/20 px-5 py-2 hover:bg-white hover:text-black transition-all duration-300"
+            className="hidden md:block text-black/70 text-xs tracking-[0.2em] uppercase border border-black/20 px-5 py-2 hover:bg-black hover:text-white transition-all duration-300"
           >
             Cart (0)
           </motion.button>
@@ -169,15 +177,15 @@ function Navbar() {
           >
             <motion.span
               animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-              className="block w-6 h-px bg-white"
+              className="block w-6 h-px bg-black"
             />
             <motion.span
               animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="block w-6 h-px bg-white"
+              className="block w-6 h-px bg-black"
             />
             <motion.span
               animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-              className="block w-6 h-px bg-white"
+              className="block w-6 h-px bg-black"
             />
           </button>
         </div>
@@ -191,7 +199,7 @@ function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ duration: 0.5, ease: EASE }}
-            className="fixed inset-0 z-40 bg-[#0a0a0a] flex flex-col items-center justify-center gap-10"
+            className="fixed inset-0 z-40 bg-white flex flex-col items-center justify-center gap-10"
           >
             {navItems.map((item, i) => (
               <motion.a
@@ -201,7 +209,7 @@ function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + i * 0.08 }}
                 onClick={() => setMenuOpen(false)}
-                className="text-white text-4xl font-light tracking-[0.3em] uppercase hover:opacity-40 transition-opacity"
+                className="text-black text-4xl font-light tracking-[0.3em] uppercase hover:opacity-40 transition-opacity"
               >
                 {item.label}
               </motion.a>
@@ -224,13 +232,13 @@ function Hero() {
   const letters = "yumie".split("");
 
   return (
-    <section ref={ref} className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-[#0a0a0a]">
+    <section ref={ref} className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-white">
       {/* Subtle grid bg */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage:
-            "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+            "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)",
           backgroundSize: "80px 80px",
         }}
       />
@@ -250,11 +258,11 @@ function Hero() {
             <motion.span
               key={i}
               variants={letterVariant}
-              className="text-white font-bold uppercase leading-none select-none"
+              className="text-black font-bold uppercase leading-none select-none"
               style={{
-                fontSize: "clamp(5rem, 18vw, 18rem)",
+                fontSize: "clamp(5rem, 18vw, 8rem)",
                 letterSpacing: "-0.02em",
-                fontFamily: "var(--font-geist-sans)",
+                fontFamily: playfair.style.fontFamily,
               }}
             >
               {letter}
@@ -269,7 +277,7 @@ function Hero() {
           whileInView="visible"
           viewport={{ once: true }}
           custom={7}
-          className="text-white/40 text-xs md:text-sm tracking-[0.5em] uppercase mt-6"
+          className="text-black/40 text-xs md:text-sm tracking-[0.5em] uppercase mt-6"
         >
           Distinctly Yours
         </motion.p>
@@ -285,16 +293,16 @@ function Hero() {
         >
           <motion.a
             href="#collection"
-            whileHover={{ backgroundColor: "#fff", color: "#0a0a0a" }}
+            whileHover={{ backgroundColor: "#0a0a0a", color: "#fff" }}
             whileTap={{ scale: 0.97 }}
-            className="px-10 py-4 border border-white text-white text-xs tracking-[0.3em] uppercase transition-all duration-300"
+            className="px-10 py-4 border border-black text-black text-xs tracking-[0.3em] uppercase transition-all duration-300"
           >
             Explore Collection
           </motion.a>
           <motion.a
             href="#about"
             whileHover={{ opacity: 0.5 }}
-            className="text-white/40 text-xs tracking-[0.25em] uppercase transition-all"
+            className="text-black/40 text-xs tracking-[0.25em] uppercase transition-all"
           >
             Our Story →
           </motion.a>
@@ -308,11 +316,11 @@ function Hero() {
         transition={{ delay: 2, duration: 1 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
       >
-        <span className="text-white/30 text-[10px] tracking-[0.4em] uppercase">Scroll</span>
+        <span className="text-black/30 text-[10px] tracking-[0.4em] uppercase">Scroll</span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-          className="w-px h-10 bg-gradient-to-b from-white/40 to-transparent"
+          className="w-px h-10 bg-gradient-to-b from-black/40 to-transparent"
         />
       </motion.div>
     </section>
@@ -326,7 +334,7 @@ function Marquee() {
   const repeated = text.repeat(6);
 
   return (
-    <div className="bg-white overflow-hidden py-4 border-y border-white/10">
+    <div className="bg-white overflow-hidden py-4 border-y border-black/10">
       <div className="flex whitespace-nowrap marquee-track">
         <span className="text-black text-xs tracking-[0.3em] uppercase font-medium pr-0">
           {repeated}
@@ -417,7 +425,7 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
         {/* Center logo watermark */}
         <div className="absolute inset-0 flex items-center justify-center">
           <span
-            className="text-white/5 font-bold tracking-widest uppercase select-none"
+            className={`${playfair.className} text-black/5 font-bold tracking-widest uppercase select-none`}
             style={{ fontSize: "clamp(2rem, 6vw, 5rem)" }}
           >
             yumie
@@ -425,7 +433,7 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
         </div>
         {/* Tag */}
         <div className="absolute top-4 left-4">
-          <span className="text-black bg-white text-[9px] tracking-[0.2em] uppercase px-2 py-1">
+          <span className="text-white bg-black text-[9px] tracking-[0.2em] uppercase px-2 py-1">
             {product.tag}
           </span>
         </div>
@@ -433,9 +441,9 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
         <motion.div
           animate={{ opacity: hovered ? 1 : 0 }}
           transition={{ duration: 0.3 }}
-          className="absolute inset-0 bg-black/50 flex items-end justify-center pb-8"
+          className="absolute inset-0 bg-white/70 flex items-end justify-center pb-8"
         >
-          <span className="text-white text-xs tracking-[0.3em] uppercase border border-white px-6 py-3">
+          <span className="text-black text-xs tracking-[0.3em] uppercase border border-black px-6 py-3 bg-white">
             Quick View
           </span>
         </motion.div>
@@ -444,17 +452,17 @@ function ProductCard({ product, index }: { product: typeof products[0]; index: n
       {/* Info */}
       <div className="flex justify-between items-start">
         <div>
-          <p className="text-white/40 text-[10px] tracking-[0.2em] uppercase mb-1">{product.category}</p>
-          <h3 className="text-white text-sm tracking-wide">{product.name}</h3>
+          <p className="text-black/40 text-[10px] tracking-[0.2em] uppercase mb-1">{product.category}</p>
+          <h3 className="text-black text-sm tracking-wide">{product.name}</h3>
         </div>
-        <span className="text-white text-sm font-light">{product.price}</span>
+        <span className="text-black text-sm font-light">{product.price}</span>
       </div>
 
       {/* Add to cart */}
       <motion.button
         animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 6 }}
         transition={{ duration: 0.25 }}
-        className="mt-3 w-full py-2.5 border border-white/20 text-white/70 text-[10px] tracking-[0.3em] uppercase hover:bg-white hover:text-black hover:border-white transition-all duration-300"
+        className="mt-3 w-full py-2.5 border border-black/20 text-black/70 text-[10px] tracking-[0.3em] uppercase hover:bg-black hover:text-white hover:border-black transition-all duration-300"
       >
         Add to Cart
       </motion.button>
@@ -467,7 +475,7 @@ function Collection() {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="collection" className="bg-[#0a0a0a] py-28 px-6 md:px-16">
+    <section id="collection" className="bg-white py-28 px-6 md:px-16">
       <div ref={ref} className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
@@ -477,7 +485,7 @@ function Collection() {
               initial="hidden"
               animate={inView ? "visible" : "hidden"}
               custom={0}
-              className="text-white/30 text-[10px] tracking-[0.4em] uppercase mb-3"
+              className="text-black/30 text-[10px] tracking-[0.4em] uppercase mb-3"
             >
               SS 2025
             </motion.p>
@@ -486,7 +494,7 @@ function Collection() {
               initial="hidden"
               animate={inView ? "visible" : "hidden"}
               custom={1}
-              className="text-white text-4xl md:text-5xl font-light tracking-tight"
+              className="text-black text-4xl md:text-5xl font-light tracking-tight"
             >
               Featured Pieces
             </motion.h2>
@@ -498,7 +506,7 @@ function Collection() {
             custom={2}
             href="#"
             whileHover={{ opacity: 0.5 }}
-            className="text-white/50 text-xs tracking-[0.3em] uppercase border-b border-white/20 pb-1 self-start md:self-auto"
+            className="text-black/50 text-xs tracking-[0.3em] uppercase border-b border-black/20 pb-1 self-start md:self-auto"
           >
             View All →
           </motion.a>
@@ -531,7 +539,7 @@ function BrandStatement() {
       {/* Decorative large text bg */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
         <span
-          className="text-black/[0.03] font-bold uppercase tracking-tight"
+          className={`${playfair.className} text-black/[0.03] font-bold uppercase tracking-tight`}
           style={{ fontSize: "clamp(6rem, 22vw, 22rem)" }}
         >
           yumie
@@ -612,7 +620,7 @@ function NewArrivals() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="new-arrivals" className="bg-[#0a0a0a] py-24 px-6 md:px-16">
+    <section id="new-arrivals" className="bg-white py-24 px-6 md:px-16">
       <div ref={ref} className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
@@ -621,7 +629,7 @@ function NewArrivals() {
               initial="hidden"
               animate={inView ? "visible" : "hidden"}
               custom={0}
-              className="text-white/30 text-[10px] tracking-[0.4em] uppercase mb-3"
+              className="text-black/30 text-[10px] tracking-[0.4em] uppercase mb-3"
             >
               Just Landed
             </motion.p>
@@ -630,7 +638,7 @@ function NewArrivals() {
               initial="hidden"
               animate={inView ? "visible" : "hidden"}
               custom={1}
-              className="text-white text-4xl md:text-5xl font-light tracking-tight"
+              className="text-black text-4xl md:text-5xl font-light tracking-tight"
             >
               New Arrivals
             </motion.h2>
@@ -642,7 +650,7 @@ function NewArrivals() {
             custom={2}
             href="#"
             whileHover={{ opacity: 0.5 }}
-            className="text-white/50 text-xs tracking-[0.3em] uppercase border-b border-white/20 pb-1 self-start md:self-auto"
+            className="text-black/50 text-xs tracking-[0.3em] uppercase border-b border-black/20 pb-1 self-start md:self-auto"
           >
             Shop Drops →
           </motion.a>
@@ -669,24 +677,24 @@ function NewArrivals() {
                   }}
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="text-black bg-white text-[9px] tracking-[0.2em] uppercase px-2 py-1">
+                  <span className="text-white bg-black text-[9px] tracking-[0.2em] uppercase px-2 py-1">
                     {item.tag}
                   </span>
                 </div>
                 <div className="absolute bottom-4 left-4">
-                  <span className="text-white/45 text-[10px] tracking-[0.3em] uppercase">{item.label}</span>
+                  <span className="text-black/45 text-[10px] tracking-[0.3em] uppercase">{item.label}</span>
                 </div>
                 <motion.div
                   initial={{ opacity: 0 }}
                   whileHover={{ opacity: 1 }}
-                  className="absolute inset-0 bg-black/50 flex items-center justify-center"
+                  className="absolute inset-0 bg-white/70 flex items-center justify-center"
                 >
-                  <span className="text-white text-[10px] tracking-[0.3em] uppercase border border-white px-5 py-2">
+                  <span className="text-black text-[10px] tracking-[0.3em] uppercase border border-black px-5 py-2 bg-white">
                     Quick View
                   </span>
                 </motion.div>
               </div>
-              <h3 className="text-white text-sm tracking-wide">{item.name}</h3>
+              <h3 className="text-black text-sm tracking-wide">{item.name}</h3>
             </motion.article>
           ))}
         </div>
@@ -709,7 +717,7 @@ function Stats() {
   ];
 
   return (
-    <section className="bg-[#0f0f0f] border-t border-white/5 py-24 px-6 md:px-16">
+    <section className="bg-white border-t border-black/5 py-24 px-6 md:px-16">
       <div ref={ref} className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12">
         {stats.map((stat, i) => (
           <motion.div
@@ -720,8 +728,8 @@ function Stats() {
             custom={i * 1.5}
             className="text-center"
           >
-            <p className="text-white text-4xl md:text-5xl font-light tracking-tight mb-2">{stat.value}</p>
-            <p className="text-white/30 text-[10px] tracking-[0.3em] uppercase">{stat.label}</p>
+            <p className="text-black text-4xl md:text-5xl font-light tracking-tight mb-2">{stat.value}</p>
+            <p className="text-black/30 text-[10px] tracking-[0.3em] uppercase">{stat.label}</p>
           </motion.div>
         ))}
       </div>
@@ -830,7 +838,7 @@ function Footer() {
   };
 
   return (
-    <footer className="bg-[#0a0a0a] border-t border-white/10 pt-20 pb-10 px-6 md:px-16">
+    <footer className="bg-white border-t border-black/10 pt-20 pb-10 px-6 md:px-16">
       <div className="max-w-7xl mx-auto">
         {/* Top grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
@@ -839,7 +847,7 @@ function Footer() {
             <div className="mb-4">
               <BrandLogo className="h-12 w-auto" />
             </div>
-            <p className="text-white/30 text-xs leading-relaxed tracking-wide max-w-48">
+            <p className="text-black/30 text-xs leading-relaxed tracking-wide max-w-48">
               Avant-garde clothing for those who move in monochrome.
             </p>
             <div className="flex gap-4 mt-6">
@@ -848,7 +856,7 @@ function Footer() {
                   key={s}
                   href="#"
                   whileHover={{ opacity: 0.5 }}
-                  className="text-white/40 text-[10px] tracking-[0.2em] uppercase border border-white/10 px-3 py-2"
+                  className="text-black/40 text-[10px] tracking-[0.2em] uppercase border border-black/10 px-3 py-2"
                 >
                   {s}
                 </motion.a>
@@ -859,14 +867,14 @@ function Footer() {
           {/* Link columns */}
           {Object.entries(links).map(([section, items]) => (
             <div key={section}>
-              <p className="text-white/30 text-[9px] tracking-[0.4em] uppercase mb-5">{section}</p>
+              <p className="text-black/30 text-[9px] tracking-[0.4em] uppercase mb-5">{section}</p>
               <ul className="space-y-3">
                 {items.map((item) => (
                   <li key={item}>
                     <motion.a
                       href="#"
                       whileHover={{ opacity: 0.5, x: 4 }}
-                      className="text-white/60 text-xs tracking-wide transition-all inline-block"
+                      className="text-black/60 text-xs tracking-wide transition-all inline-block"
                     >
                       {item}
                     </motion.a>
@@ -878,8 +886,8 @@ function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-white/20 text-[10px] tracking-[0.3em] uppercase">
+        <div className="border-t border-black/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-black/20 text-[10px] tracking-[0.3em] uppercase">
             © 2026 yumie. All rights reserved.
           </p>
           <div className="flex gap-6">
@@ -888,7 +896,7 @@ function Footer() {
                 key={item}
                 href="#"
                 whileHover={{ opacity: 0.5 }}
-                className="text-white/20 text-[10px] tracking-[0.2em] uppercase"
+                className="text-black/20 text-[10px] tracking-[0.2em] uppercase"
               >
                 {item}
               </motion.a>
@@ -924,7 +932,7 @@ export default function Home() {
         {isLoading && <Loader onComplete={() => setIsLoading(false)} />}
       </AnimatePresence>
 
-      <main className="bg-[#0a0a0a] min-h-screen">
+      <main className="bg-white min-h-screen text-black">
         <Navbar />
         <Hero />
         <Marquee />
