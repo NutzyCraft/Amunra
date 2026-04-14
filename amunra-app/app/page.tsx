@@ -124,7 +124,6 @@ function Navbar() {
     { label: "Collection", href: "/collection" },
     { label: "New Arrivals", href: "#/new-arrivals" },
     { label: "About", href: "#/about" },
-    { label: "Login", href: "/auth/login" },
   ];
 
   useEffect(() => {
@@ -170,6 +169,17 @@ function Navbar() {
           >
             Cart (0)
           </motion.button>
+          <motion.a
+            href="/auth/login"
+            whileHover={{ scale: 1.05, opacity: 0.7 }}
+            className="hidden md:inline-flex items-center justify-center h-10 w-10 border border-white/20 text-white/80 hover:bg-white hover:text-black transition-all duration-300"
+            aria-label="Go to login"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <circle cx="12" cy="8" r="3.5" />
+              <path d="M4 20a8 8 0 0 1 16 0" />
+            </svg>
+          </motion.a>
           {/* Hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
