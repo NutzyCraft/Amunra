@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Playfair_Display } from "next/font/google";
+import AddToCartPanel from "./AddToCartPanel";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -25,8 +26,6 @@ const categoryTheme: Record<CategoryKey, { label: string; imageAccent: string; i
     imageText: "text-black",
   },
 };
-
-const sizes = ["XS", "S", "M", "L", "XL"];
 
 type PageProps = {
   params: Promise<{ category: string }>;
@@ -89,44 +88,12 @@ export default async function ProductDetailPage({ params, searchParams }: PagePr
               <span className="text-[10px] tracking-[0.35em] uppercase text-black/40">In Stock</span>
             </div>
 
-            <div className="mb-8">
-              <p className="text-black/40 text-[10px] tracking-[0.35em] uppercase mb-3">Size</p>
-              <div className="grid grid-cols-5 gap-2 max-w-md">
-                {sizes.map((size) => (
-                  <button
-                    key={size}
-                    type="button"
-                    className="border border-black/20 px-3 py-2 text-xs tracking-[0.2em] uppercase hover:bg-black hover:text-white transition-all"
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mb-8">
-              <p className="text-black/40 text-[10px] tracking-[0.35em] uppercase mb-3">Quantity</p>
-              <div className="inline-flex items-center border border-black/20">
-                <button type="button" className="px-4 py-2 text-black/60 hover:bg-black hover:text-white transition-all">-</button>
-                <span className="px-5 py-2 text-sm">1</span>
-                <button type="button" className="px-4 py-2 text-black/60 hover:bg-black hover:text-white transition-all">+</button>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 mb-8">
-              <button
-                type="button"
-                className="flex-1 border border-black bg-black text-white px-5 py-3 text-xs tracking-[0.3em] uppercase hover:bg-white hover:text-black transition-all"
-              >
-                Add to Cart
-              </button>
-              <button
-                type="button"
-                className="flex-1 border border-black px-5 py-3 text-xs tracking-[0.3em] uppercase hover:bg-black hover:text-white transition-all"
-              >
-                Buy Now
-              </button>
-            </div>
+            <AddToCartPanel
+              productName={productName}
+              productPrice={productPrice}
+              productType={productType}
+              category={normalizedCategory}
+            />
 
             <div className="border-t border-black/10 pt-6 space-y-4 text-sm text-black/65 leading-relaxed">
               <p>

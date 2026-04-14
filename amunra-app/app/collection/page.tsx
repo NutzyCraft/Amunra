@@ -26,7 +26,6 @@ type CategoryConfig = {
 	headline: string;
 	description: string;
 	note: string;
-	productCount: string;
 	spotlight: CollectionItem;
 	items: CollectionItem[];
 };
@@ -39,7 +38,6 @@ const categories: CategoryConfig[] = [
 		description:
 			"Sharp outerwear, wide-leg silhouettes, and quiet essentials designed for an understated wardrobe.",
 		note: "Refined essentials",
-		productCount: "24 pieces",
 		spotlight: {
 			name: "Noir Structured Coat",
 			category: "Outerwear",
@@ -60,7 +58,6 @@ const categories: CategoryConfig[] = [
 		description:
 			"Layered tailoring, fluid drape, and elevated staples balanced between precision and ease.",
 		note: "Modern classics",
-		productCount: "28 pieces",
 		spotlight: {
 			name: "Ivory Column Dress",
 			category: "Dresses",
@@ -81,7 +78,6 @@ const categories: CategoryConfig[] = [
 		description:
 			"Comfort-first staples with durable fabrics, relaxed fits, and a calm monochrome palette.",
 		note: "Everyday essentials",
-		productCount: "16 pieces",
 		spotlight: {
 			name: "Mini Canvas Set",
 			category: "Sets",
@@ -125,9 +121,6 @@ function CategoryCard({
 					</p>
 					<h2 className={`text-3xl md:text-4xl ${playfair.className}`}>{category.label}</h2>
 				</div>
-				<span className={`text-[10px] tracking-[0.3em] uppercase ${active ? "text-white/60" : "text-black/40"}`}>
-					{category.productCount}
-				</span>
 			</div>
 
 			<div className={`h-px w-full mb-5 ${active ? "bg-white/20" : "bg-black/10"}`} />
@@ -137,9 +130,6 @@ function CategoryCard({
 			</p>
 
 			<div className="mt-6 flex items-center justify-between">
-				<span className={`text-[10px] tracking-[0.3em] uppercase ${active ? "text-white/50" : "text-black/40"}`}>
-					Explore {category.label}
-				</span>
 				<Link
 					href={`/collection/${category.key}`}
 					onClick={(e) => e.stopPropagation()}
@@ -149,7 +139,7 @@ function CategoryCard({
 							: "text-black border-black/30 hover:bg-black hover:text-white"
 					}`}
 				>
-					Open Page
+					Explore {category.label}
 				</Link>
 			</div>
 		</motion.button>
@@ -327,9 +317,6 @@ export default function CollectionPage() {
 										<p className="text-black/40 text-[10px] tracking-[0.4em] uppercase mb-2">Selected Edit</p>
 										<h3 className={`${playfair.className} text-3xl md:text-4xl`}>{selected.label}</h3>
 									</div>
-									<span className="text-[10px] tracking-[0.3em] uppercase border border-black px-3 py-2">
-										{selected.productCount}
-									</span>
 								</div>
 
 								<AnimatePresence mode="wait">
