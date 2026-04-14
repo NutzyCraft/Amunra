@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
@@ -125,6 +126,70 @@ const BENEFITS = [
 		),
 	},
 ];
+
+function Footer() {
+	const links = {
+		Shop: ["New Arrivals", "Tops", "Bottoms", "Outerwear", "Accessories"],
+		Info: ["About Us", "Sustainability", "Collaborations", "Press"],
+		Support: ["Sizing Guide", "Returns", "Shipping", "Contact Us"],
+	};
+
+	return (
+		<footer className="bg-black border-t border-white/10 pt-20 pb-10 px-6 md:px-16 mt-16">
+			<div className="max-w-7xl mx-auto">
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
+					<div className="col-span-2 md:col-span-1">
+						<div className="mb-4">
+							<div className="inline-flex items-center justify-center bg-white border border-black/10 p-1 shadow-sm h-12 w-auto">
+								<Image src="/Yumie.png" alt="yumie logo" width={220} height={110} className="h-full w-auto" />
+							</div>
+						</div>
+						<p className="text-white/30 text-xs leading-relaxed tracking-wide max-w-48">
+							Avant-garde clothing for those who move in monochrome.
+						</p>
+						<div className="flex gap-4 mt-6">
+							{["IG", "TK", "X"].map((s) => (
+								<a
+									key={s}
+									href="#"
+									className="text-white/40 text-[10px] tracking-[0.2em] uppercase border border-white/10 px-3 py-2 hover:opacity-50 transition-opacity"
+								>
+									{s}
+								</a>
+							))}
+						</div>
+					</div>
+
+					{Object.entries(links).map(([section, items]) => (
+						<div key={section}>
+							<p className="text-white/30 text-[9px] tracking-[0.4em] uppercase mb-5">{section}</p>
+							<ul className="space-y-3">
+								{items.map((item) => (
+									<li key={item}>
+										<a href="#" className="text-white/60 text-xs tracking-wide transition-all inline-block hover:opacity-50">
+											{item}
+										</a>
+									</li>
+								))}
+							</ul>
+						</div>
+					))}
+				</div>
+
+				<div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+					<p className="text-white/20 text-[10px] tracking-[0.3em] uppercase">© 2026 yumie. All rights reserved.</p>
+					<div className="flex gap-6">
+						{["Privacy Policy", "Terms of Service", "Cookie Policy"].map((item) => (
+							<a key={item} href="#" className="text-white/20 text-[10px] tracking-[0.2em] uppercase hover:opacity-50 transition-opacity">
+								{item}
+							</a>
+						))}
+					</div>
+				</div>
+			</div>
+		</footer>
+	);
+}
 
 export default function AccountPage() {
 	const router = useRouter();
@@ -291,10 +356,16 @@ export default function AccountPage() {
 	return (
 		<section className="min-h-[calc(100vh-89px)] bg-[#efefef] text-[#06080d] px-6 md:px-10 py-10 md:py-12">
 			<div className="mx-auto w-full max-w-[1320px]">
-				<header className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-					<h1 className="text-[2.85rem] leading-none tracking-tight font-light">My account</h1>
+					<header className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+						<div className="flex flex-col gap-4">
+							<Link href="/" className="inline-flex w-fit items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-[#4f5b69] hover:text-[#06080d] transition-colors">
+								<span className="text-lg leading-none">←</span>
+								Back to shopping
+							</Link>
+							<h1 className="text-[2.3rem] md:text-[2.65rem] leading-none tracking-tight font-light">My account</h1>
+						</div>
 					<div className="flex flex-wrap items-center gap-5 pt-2 text-lg">
-						<p className="font-light">Welcome back, {displayName}!</p>
+							<p className="font-light text-base md:text-lg">Welcome back, {displayName}!</p>
 						<Link href="/auth/login" className="font-semibold underline underline-offset-4 hover:opacity-70 transition-opacity">
 							Log out
 						</Link>
@@ -302,12 +373,12 @@ export default function AccountPage() {
 				</header>
 
 				<div className="mt-14 flex items-center gap-5">
-					<div className="rounded-[14px] bg-black text-white text-[2rem] leading-none tracking-tight px-6 py-3">My orders</div>
+						<div className="rounded-[14px] bg-black text-white text-[1.4rem] leading-none tracking-tight px-6 py-3">My orders</div>
 				</div>
 
 				<section className="mt-14 border-y border-[#d6d6d6]">
 					<div className="py-8">
-						<h2 className="text-[2.2rem] tracking-tight font-light">My orders ({orderCount})</h2>
+							<h2 className="text-[1.75rem] md:text-[2rem] tracking-tight font-light">My orders ({orderCount})</h2>
 					</div>
 
 					{hasOrders ? (
@@ -315,25 +386,25 @@ export default function AccountPage() {
 							<table className="w-full min-w-[860px] border-collapse">
 								<thead>
 									<tr className="border-t border-[#d6d6d6] border-b border-[#d6d6d6] text-left">
-										<th className="py-8 px-5 text-[2.35rem] tracking-tight font-semibold">Order</th>
-										<th className="py-8 px-5 text-[2.35rem] tracking-tight font-semibold">Date</th>
-										<th className="py-8 px-5 text-[2.35rem] tracking-tight font-semibold">Payment status</th>
-										<th className="py-8 px-5 text-[2.35rem] tracking-tight font-semibold">Fulfillment status</th>
-										<th className="py-8 px-5 text-right text-[2.35rem] tracking-tight font-semibold">Total</th>
+										<th className="py-8 px-5 text-[1.35rem] md:text-[1.6rem] tracking-tight font-semibold">Order</th>
+										<th className="py-8 px-5 text-[1.35rem] md:text-[1.6rem] tracking-tight font-semibold">Date</th>
+										<th className="py-8 px-5 text-[1.35rem] md:text-[1.6rem] tracking-tight font-semibold">Payment status</th>
+										<th className="py-8 px-5 text-[1.35rem] md:text-[1.6rem] tracking-tight font-semibold">Fulfillment status</th>
+										<th className="py-8 px-5 text-right text-[1.35rem] md:text-[1.6rem] tracking-tight font-semibold">Total</th>
 									</tr>
 								</thead>
 								<tbody>
 									{orders.map((row) => (
 										<tr key={row.orderNo} className="border-b border-[#d6d6d6]">
-											<td className="px-5 py-10 text-[2rem]">
+											<td className="px-5 py-10 text-[1.15rem] md:text-[1.4rem]">
 												<span className="inline-flex items-center rounded-full border border-[#d0d0d0] bg-[#f5f5f5] px-5 py-2.5 leading-none">
 													{row.orderNo}
 												</span>
 											</td>
-											<td className="px-5 py-10 text-[2rem] font-light">{row.date}</td>
-											<td className="px-5 py-10 text-[2rem] font-light">{row.paymentStatus}</td>
-											<td className="px-5 py-10 text-[2rem] font-light">{row.fulfillmentStatus}</td>
-											<td className="px-5 py-10 text-right text-[2rem] font-light">{row.total}</td>
+											<td className="px-5 py-10 text-[1.15rem] md:text-[1.4rem] font-light">{row.date}</td>
+											<td className="px-5 py-10 text-[1.15rem] md:text-[1.4rem] font-light">{row.paymentStatus}</td>
+											<td className="px-5 py-10 text-[1.15rem] md:text-[1.4rem] font-light">{row.fulfillmentStatus}</td>
+											<td className="px-5 py-10 text-right text-[1.15rem] md:text-[1.4rem] font-light">{row.total}</td>
 										</tr>
 									))}
 								</tbody>
@@ -348,7 +419,7 @@ export default function AccountPage() {
 
 				<section className="mt-12 border border-[#d6d6d6] bg-[#f5f5f5] p-6 md:p-8">
 					<div className="mb-8">
-						<h3 className="text-[2rem] tracking-tight font-light">Save your address</h3>
+							<h3 className="text-[1.5rem] md:text-[1.75rem] tracking-tight font-light">Save your address</h3>
 						<p className="mt-2 text-sm text-[#4f5b69]">Address data is now stored in your account.</p>
 					</div>
 
@@ -452,16 +523,18 @@ export default function AccountPage() {
 					)}
 				</section>
 
-				<section className="mt-12 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-12 md:gap-10">
+					<section className="mt-12 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-12 md:gap-10">
 					{BENEFITS.map((benefit) => (
 						<div key={benefit.title} className="text-center">
 							<div className="inline-flex items-center justify-center text-black">{benefit.icon}</div>
-							<h3 className="mt-7 text-[2.05rem] tracking-tight font-semibold">{benefit.title}</h3>
-							<p className="mt-4 text-[2rem] tracking-tight font-light">{benefit.description}</p>
+								<h3 className="mt-7 text-[1.5rem] md:text-[1.75rem] tracking-tight font-semibold">{benefit.title}</h3>
+								<p className="mt-4 text-[1rem] md:text-[1.15rem] tracking-tight font-light">{benefit.description}</p>
 						</div>
 					))}
 				</section>
 			</div>
+
+				<Footer />
 		</section>
-	);
+		);
 }
